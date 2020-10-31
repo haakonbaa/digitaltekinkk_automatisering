@@ -6,21 +6,21 @@ def dec2binary(dec, length):  # gjer eit desimalt tal om til binært tal med len
     binary = "0" * (length - len(binary)) + binary
     return binary
 
-def antalEin(binary): #Returnerer antal eittal i binært tal
+def antalEin(binary): #Returnerer antal eittal i binært tal 
     antal = 0
     for siffer in binary:
         if siffer == "1":
             antal += 1
     return antal
 
-def mintermar2tabell(mintermar):
+def mintermar2tabell(mintermar): #Tar inn mintermar ag gjere det om til tabell slik som i tabellmetoden
     tabell = []
     for minterm in mintermar:
         binary = dec2binary(minterm, len(variablar))
         tabell.append([antalEin(binary), tuple([minterm]), binary, False])
     return tabell
 
-def maketabell(tabellMintermar):
+def maketabell(tabellMintermar): 
     tabell = [None for i in range(len(variablar)+1)]
 
     for minterm in tabellMintermar:
@@ -31,7 +31,7 @@ def maketabell(tabellMintermar):
 
     return tabell
 
-def forkjellEin(bin1, bin2):
+def forkjellEin(bin1, bin2): #returnerer forenkla binært tal dersom forskjellen er ein ellers None
     forskjell = 0
     for i in range(len(bin1)):
         if bin1[i] != bin2[i]:
@@ -45,7 +45,7 @@ def forkjellEin(bin1, bin2):
         return forenkla
     return None
 
-def tabellmetoden(tabell):
+def tabellmetoden(tabell): #reknar ut neste tabell
     nyTabell = [None for i in range(len(tabell)-1)]
     for i in range(len(tabell)-1):
         if not tabell[i] or not tabell[i+1]:
@@ -63,14 +63,14 @@ def tabellmetoden(tabell):
                         nyTabell[i] = [[i, tabell[i][q][1] + tabell[i+1][w][1], forkjellEin(bin1, bin2), False]]
     return nyTabell, tabell
 
-def printTabell(tabell):
+def printTabell(tabell): #printer tabellen på eit "fint" format
     for i in range(len(tabell)):
         if tabell[i]:
             for minterm in tabell[i]:
                 print(minterm)
     print()
 
-def essensielPI(PI, mintermar):
+def essensielPI(PI, mintermar): #Finner essensielle primimplikantar. Endrer så veriden til True
     for minterm in mintermar:
         dekkt = 0
         for i in range(len(PI)):
@@ -81,7 +81,7 @@ def essensielPI(PI, mintermar):
             PI[primImp][3] = True
     return PI
 
-def delDuplicat(PI):
+def delDuplicat(PI): #Fjerner duplikat av primimplikantar
     kopi = [x[:] for x in PI]
     for i in range(len(PI)-1):
         for q in range(i+1, len(PI)):
@@ -89,7 +89,7 @@ def delDuplicat(PI):
                 kopi.remove(PI[i])
     return kopi
 
-def irredudant(PI, mintermar):
+def irredudant(PI, mintermar): #finner irredudant dekkning ved å velge dei mintermane som dekke flest udekka mintermar
     uttrykk = []
     mintermar = set(mintermar)
     dekkt = None
@@ -116,7 +116,7 @@ def irredudant(PI, mintermar):
     return uttrykk
 
 
-def irredudant2boolsk(irredudant):
+def irredudant2boolsk(irredudant): #Gjer irredudant dekning om til boolskfunksjon
     boolsk = ""
     for primImp in irredudant:
         uttrykk = ""
@@ -145,6 +145,9 @@ def main():
                     break
             if ugyldig:
                 continue
+            if len(mintermar) != len(set(mintermar)):
+                print("Du skreiv inn ein minterm fleire gongar")
+                continue
             break
         except:
             print("mintermane må vere eit tal")
@@ -154,7 +157,7 @@ def main():
     nyTabell = maketabell(tabellMintermar)
     PI = [] #Prim implikantar
     print("\nTabellar:")
-    while True:
+    while True: #Kjører tabellmetoden til det ikkje går an å forenkla meir
         nyTabell,tabell = tabellmetoden(nyTabell)
         if nyTabell == [None for i in range(len(nyTabell))]:
             for i in range(len(tabell)):
