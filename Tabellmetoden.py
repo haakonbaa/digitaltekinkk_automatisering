@@ -188,5 +188,4 @@ def main():
     print("Forenkla boolsk funksjon:")
     print("F = " + boolsk)
 
-
 main()
