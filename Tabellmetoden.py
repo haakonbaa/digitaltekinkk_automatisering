@@ -86,7 +86,7 @@ def delDuplicat(PI):
     for i in range(len(PI)-1):
         for q in range(i+1, len(PI)):
             if PI[i][2] == PI[q][2]:
-                kopi.pop(i)
+                kopi.remove(PI[i])
     return kopi
 
 def irredudant(PI, mintermar):
@@ -136,11 +136,15 @@ def main():
     while True:
         mintermar = input("Skriv inn mintermar separert med mellomrom: ").split()
         try:
+            ugyldig = False
             mintermar = list(map(lambda minterm: int(minterm), mintermar))
             for minterm in mintermar:
                 if minterm < 0 or minterm >= 2**len(variablar):
                     print("Ugyldig mintermar")
-                    continue
+                    ugyldig = True
+                    break
+            if ugyldig:
+                continue
             break
         except:
             print("mintermane må vere eit tal")
@@ -182,24 +186,4 @@ def main():
     print("F = " + boolsk)
 
 
-
-
-
-
-
 main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
