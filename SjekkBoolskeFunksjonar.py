@@ -1,6 +1,3 @@
-
-
-
 def sannhetstabell(variablar, mintermar): #Lager sannhetstabell for ein funskjon vha. mintermane til funksjonen og antal variablar
     tabell = [0 for i in range(2**variablar)]
     for minterm in mintermar:
