@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+=======
+# Dette er eit program som sjekke om to boolske funksjonar er like.
+# Den ein funksjonen er gitt på kanonisk form, medan den andre er som ein vanleg boolsk funksjon
+# Ein skriv fyrst inn variablane frå MSB til LSB
+# skriv så inn mintremane til funksjonen på kanonisk form
+# Til slutt skriv ein inn utrykket ein har forenkla den til
+# Ein får så tilbake melding på om dei er like eller ikkje
+
+>>>>>>> 56a0bf48b26e750151172c108ba99d7282b25300
 def sannhetstabell(variablar, mintermar): #Lager sannhetstabell for ein funskjon vha. mintermane til funksjonen og antal variablar
     tabell = [0 for i in range(2**variablar)]
     for minterm in mintermar:
