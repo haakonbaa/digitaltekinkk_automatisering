@@ -6,7 +6,7 @@ def dec2binary(dec, length):  # gjer eit desimalt tal om til binært tal med len
     binary = "0" * (length - len(binary)) + binary
     return binary
 
-def antalEin(binary):
+def antalEin(binary): #Returnerer antal eittal i binært tal
     antal = 0
     for siffer in binary:
         if siffer == "1":
