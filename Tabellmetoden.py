@@ -64,11 +64,83 @@ def tabellmetoden(tabell): #reknar ut neste tabell
     return nyTabell, tabell
 
 def printTabell(tabell): #printer tabellen på eit "fint" format
+    maxSub = len("Subkube")
+    maxVerdi = len("Verdi")
+    for i in range(len(tabell)):
+        if tabell[i]:
+            for j in range(len(tabell[i])):
+                Sub = len(str(tabell[i][j][1]))
+                Verdi = len(tabell[i][j][2])
+                if Sub > maxSub:
+                    maxSub = Sub
+                if Verdi > maxVerdi:
+                    maxVerdi = Verdi
+
+    lengdTabell = len("|Gruppa|  |  | Dekka |") + maxSub + maxVerdi
+
+    print("-"*lengdTabell)
+    print("|Gruppa| " + "Subkube".ljust(maxSub) + " | " + "Verdi".ljust(maxVerdi) + " | Dekka |")
+    print("-"*lengdTabell)
     for i in range(len(tabell)):
         if tabell[i]:
             for minterm in tabell[i]:
-                print(minterm)
+                print("|   " + str(minterm[0]) + "  | " + str(minterm[1]).ljust(maxSub) + " | " + str(minterm[2]).ljust(maxVerdi) + " | ", end= "")
+                if minterm[3]:
+                    print(str(minterm[3]) + "  |")
+                else:
+                    print(str(minterm[3]) + " |")
+                print("-"*lengdTabell)
     print()
+
+
+def printPI(PI, mintermar):
+    kopi = [x[:] for x in PI]
+    uttrykk = irredudant(kopi, mintermar)
+    maxminterm = len("Mintermar")
+    maxuttrykk = len("Uttrykk")
+    for primImp in PI:
+        if len(bin2boolsk(primImp[2])) > maxuttrykk:
+            maxuttrykk = len(bin2boolsk(primImp[2]))
+        if len(str(primImp[1])) > maxminterm:
+            maxminterm = len(str(primImp[1]))
+
+    essensiel = [] #Finn mintermane som berre er dekka av ein primimplikant
+    for minterm in mintermar:
+        antal = 0
+        for primImp in PI:
+            if minterm in primImp[1]:
+                antal += 1
+        if antal == 1:
+            essensiel.append(minterm)
+    
+    mintermar.sort()
+    maxsiffer = len(str(mintermar[-1]))
+    lengd = len("|  |  |") + len(mintermar)*(3 + maxsiffer) + len(" Valgt |") + maxminterm + maxuttrykk
+    print("-"*lengd)
+    print("| " + "Uttrykk".ljust(maxuttrykk)+ " | " + "Mintermar".ljust(maxminterm) + " |", end="")
+    for minterm in mintermar:
+        print(" " + str(minterm).ljust(maxsiffer) + " |", end="")
+    print(" Valgt |")
+    print("-"*lengd)
+    for primImp in PI:
+        boolsk = bin2boolsk(primImp[2])
+        print("| " + boolsk.ljust(maxuttrykk) + " | " + str(primImp[1]).ljust(maxminterm) + " |", end="")
+        for minterm in mintermar:
+            if minterm in primImp[1]:
+                if minterm in essensiel:
+                    print(" " + "o".ljust(maxsiffer) + " |", end="")
+                else:
+                    print(" " + "x".ljust(maxsiffer) + " |", end="")
+            else:
+                print(" " + " ".ljust(maxsiffer) + " |", end="")
+        if primImp in uttrykk:
+            print(" True  |")
+        else:
+            print(" False |")
+        print("-"*lengd)
+    print()
+            
+
 
 def essensielPI(PI, mintermar): #Finner essensielle primimplikantar. Endrer så veriden til True
     for minterm in mintermar:
@@ -83,10 +155,16 @@ def essensielPI(PI, mintermar): #Finner essensielle primimplikantar. Endrer så 
 
 def delDuplicat(PI): #Fjerner duplikat av primimplikantar
     kopi = [x[:] for x in PI]
-    for i in range(len(PI)-1):
+    """for i in range(len(PI)-1):
         for q in range(i+1, len(PI)):
             if PI[i][2] == PI[q][2]:
-                kopi.remove(PI[i])
+                print(PI[i])
+                kopi.remove(PI[i])"""
+    for i in range(len(PI)-1,0,-1):
+        for q in range(i-1,-1,-1):
+            if PI[i][2] == PI[q][2]:
+                kopi.pop(i)
+                break
     return kopi
 
 def irredudant(PI, mintermar): #finner irredudant dekkning ved å velge dei mintermane som dekke flest udekka mintermar
@@ -128,6 +206,15 @@ def irredudant2boolsk(irredudant): #Gjer irredudant dekning om til boolskfunksjo
         uttrykk += " + "
         boolsk += uttrykk
     return boolsk[:-3]
+
+def bin2boolsk(binstr):
+    boolsk = ""
+    for i in range(len(binstr)):
+        if binstr[i] == "1":
+            boolsk += variablar[i]
+        elif binstr[i] == "0":
+            boolsk += variablar[i] + "'"
+    return boolsk
 
 
 def main():
@@ -175,15 +262,10 @@ def main():
 
     PI = delDuplicat(PI)
     PI = essensielPI(PI, mintermar)
-    print("Prim implikantar: True = essensiel PI")
-    for primImp in PI:
-        print(primImp)
-    print()
+    print("Tabell for å finna minimaldekkning:")
+    printPI(PI, mintermar)
+
     uttrykk = irredudant(PI, mintermar)
-    print("Prim implikantar som er med i minimal dekkning:")
-    for primImp in uttrykk:
-        print(primImp)
-    print()
     boolsk = irredudant2boolsk(uttrykk)
     print("Forenkla boolsk funksjon:")
     print("F = " + boolsk)
