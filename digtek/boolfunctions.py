@@ -6,9 +6,11 @@ import digtek.util as util
 import digtek.html
 import digtek.errors
 
-__all__ = ["BoolFunction","LambdaFunction","MintermFunction","MaxtermFunction"]
+__all__ = ["BoolFunction","LambdaFunction","MintermFunction","MaxtermFunction","table"]
 # Definerer hvilke variabler som brukes når en funksjon printes
 VARS = "xyzwabcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# definerer alle standard funskjonsnavn som skal vises når det ikke er opgitt av bruker
+FUNCTION_NAMES = tuple(f"$F_{i}$" for i in range(100))
 
 
 
@@ -68,3 +70,19 @@ class MaxtermFunction(BoolFunction):
 
     def __str__(self,name="F",var=VARS):
         return digtek.html.termfunction(self.iterable,tuple(b for b in (util.number_to_binary(n,self.variables) for n in range(2**self.variables)) if not self(*b)),var=var,name=name,minterm=False)
+
+def table(*args,function_names = FUNCTION_NAMES):
+    variables = args[0].variables
+    for func in args:
+        if func.variables != variables:
+            raise digtek.errors.DigtekError("Can only plot functions with equal number of variable inputs!")
+    rows = []
+    bin_nums = ( util.number_to_binary(b,variables) for b in range(2**variables) )
+    for num in bin_nums:
+        row = []
+        row.extend(num)
+        for func in args:
+            row.append(func(*num))
+        rows.append(row)
+
+    digtek.html.table( rows , var = VARS[:variables],function_names=function_names[:len(args)])

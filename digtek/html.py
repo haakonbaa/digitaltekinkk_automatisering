@@ -1,5 +1,7 @@
 """For håndtering av HTML"""
 
+from IPython.core.display import display, HTML
+
 # Definerer hvilke variabler som brukes når en funksjon printes
 VARS = "xyzwabcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -36,6 +38,13 @@ def table(func):
     _shift = len(str(termnumbers[-1]))
     for i in range(len(termnumbers)):
         print(f"| {str(termnumbers[i]).rjust(_shift)} | {''.join(str(i) for i in binary[i])} | {1 if function[i] else 0} |")
+
+# printer et skjema over funskjonene
+def table(rows,function_names,var):
+    data = "<tr>" + "".join("<th>" + str(v) + "</th>" for v in var) + "".join("<th style=\"width: 10px;text-align:center;\">" + name + "</th>" for name in function_names) + "</tr>"
+    for row in rows:
+        data += "<tr>" + "".join( ("<th>" + str(el) + "</th>") for el in row ) + "</tr>\n"
+    display(HTML("<table>" + data + "</table>"))
 
 def karnaugh(func,var=VARS):
     print(TABLE44.format("".join(str(l) for l in var[0:2]),"".join(str(l) for l in var[2:4]),*[1 if func(*number_to_binary(i,4)) else 0 for i in range(16)]))
