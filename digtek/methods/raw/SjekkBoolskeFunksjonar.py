@@ -41,4 +41,5 @@ def main():
         print("\nFunksjonane er ulike")
         print("Fasit: ".ljust(6) + str(fasit) )
         print("Din: ".ljust(7) + str(svar) )
+
 main()

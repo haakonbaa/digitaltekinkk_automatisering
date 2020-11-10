@@ -1,5 +1,78 @@
 #Dette er eit program som forenklar ein funksjon gitt på kanonisk form ved hjelp av tabell metoden
 
+def sannhetstabell(variablar, mintermar): #Lager sannhetstabell for ein funskjon vha. mintermane til funksjonen og antal variablar
+    tabell = [0 for i in range(2**variablar)]
+    for minterm in mintermar:
+        tabell[minterm] = 1
+    return tabell
+
+def F(lista, variablar, func): #Definerer den boolske funksjonen ut frå input func og lista med verdi på variablane
+    for i in range(len(variablar)):
+        exec("%s = %d" % (variablar[i], lista[i]))
+    return int(eval(func))
+
+def konverterNotasjon(variablar, boolsk): #Konverterer til notasjon av boolske funksjonar som python bruker. Fungerer i utgangspunket berre på output frå tabellmetoden!
+    boolsk = boolsk.split()
+    svar = ""
+    for utrykk in boolsk:
+        if utrykk == "+":
+            svar += " or"
+        else:
+            delsvar = ""
+            indexVariablar = []
+            for i in range(len(utrykk)):
+                for j in range(len(utrykk)-i):
+                    if utrykk[j:j+i+1] in variablar:
+                        indexVariablar.append((j+i, utrykk[j:j+i+1]))
+
+            indexVariablar.sort(key= lambda x: x[0])
+            for variabel in indexVariablar:
+                delsvar += " and"
+                try:
+                    if utrykk[variabel[0]+1] == "'":
+                        delsvar += " not " + variabel[1]
+                    else:
+                        delsvar += " " + variabel[1]
+                except:
+                    delsvar += " " + variabel[1]
+            svar += delsvar[4:]
+            """  #Fungerer kun med variablar med lengd 1     
+            for i in range(len(utrykk)-1):
+                if utrykk[i] in variablar:
+
+                    delsvar += " and"
+                    if utrykk[i+1] == "'":
+                        delsvar += " not " + utrykk[i]
+                    else:
+                        delsvar += " " + utrykk[i]
+                else:
+                    if utrykk[i:i+1]
+            if utrykk[-1] in variablar:
+                delsvar += " and " + utrykk[-1]
+            svar += delsvar[4:]
+            """
+    return svar
+
+def sjekkLike(variablar, mintermar, uttrykk): #Sjekker om funskjon gitt med mintermar er lik funskjon på standarform
+    func = konverterNotasjon(variablar, uttrykk)
+    fasit = sannhetstabell(len(variablar), mintermar)
+    svar = []
+    for i in range(len(fasit)):
+        binary = dec2binary(i, len(variablar))
+        verdiar = list(map(lambda x: bool(int(x)), list(binary)))
+        svar.append(F(verdiar, variablar, func))
+    if fasit == svar:
+        return True
+    return False
+
+def sjekkbar(variablar): #Sjekker om ein variabel er ein substring av ein annan
+    for i in range(len(variablar)):
+        for j in range(len(variablar)):
+            if j == i:
+                continue
+            if variablar[i] in variablar[j]:
+                return False
+    return True
 
 def dec2binary(dec, length):  # gjer eit desimalt tal om til binært tal med lengda length
     binary = str(bin(dec)[2:])
@@ -139,7 +212,6 @@ def printPI(PI, mintermar):
             print(" False |")
         print("-"*lengd)
     print()
-            
 
 
 def essensielPI(PI, mintermar): #Finner essensielle primimplikantar. Endrer så veriden til True
@@ -269,5 +341,15 @@ def main():
     boolsk = irredudant2boolsk(uttrykk)
     print("Forenkla boolsk funksjon:")
     print("F = " + boolsk)
+    print()
+
+    if sjekkbar(variablar):
+        if sjekkLike(variablar, mintermar, boolsk):
+            print("Forenklinga er korrekt")
+        else:
+            print("Funksjonane er ulike? Sjekk om du finner nokre feil.")
+    else:
+        print("Kan ikkje sjekka om forenklinga er riktig.")
+        print("Grunna ein variabel var substring av ein annan")
 
 main()
