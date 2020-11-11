@@ -6,7 +6,7 @@ import digtek.util as util
 import digtek.html
 import digtek.errors
 
-__all__ = ["BoolFunction","LambdaFunction","MintermFunction","MaxtermFunction","table"]
+__all__ = ["BoolFunction","LambdaFunction","MintermFunction","MaxtermFunction","table","karnaugh"]
 # Definerer hvilke variabler som brukes når en funksjon printes
 VARS = "xyzwabcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # definerer alle standard funskjonsnavn som skal vises når det ikke er opgitt av bruker
@@ -86,3 +86,6 @@ def table(*args,function_names = FUNCTION_NAMES):
         rows.append(row)
 
     digtek.html.table( rows , var = VARS[:variables],function_names=function_names[:len(args)])
+
+def karnaugh(func,var=VARS):
+    digtek.html.karnaugh(func.variables,*(1 if func(*util.number_to_binary(i,func.variables)) else 0 for i in range(2**func.variables)),*var[:func.variables])

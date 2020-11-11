@@ -1,6 +1,7 @@
 """For håndtering av HTML"""
 
 from IPython.core.display import display, HTML
+import digtek.methods.html_karnaugh
 
 # Definerer hvilke variabler som brukes når en funksjon printes
 VARS = "xyzwabcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -28,17 +29,6 @@ def termfunction(iterable,minterms,var=VARS,name="F",minterm=True):
         terms = "".join(terms)
     return('$' + name + "(" + ",".join(str(var[i]) for i in range(variables)) + ') = ' + ('\\Sigma' if minterm else '\\Pi') + tuple_to_string(iterable) + ' = ' + terms + '$')
 
-def table(func):
-    if not isinstance(func,BoolFunction):
-        raise Exception("Cannot draw table of non-BoolFunction objects!")
-    termnumbers = [i for i in range(2**func.variables)]
-    binary = [number_to_binary(i,func.variables) for i in termnumbers]
-    function = [func(*b) for b in binary]
-
-    _shift = len(str(termnumbers[-1]))
-    for i in range(len(termnumbers)):
-        print(f"| {str(termnumbers[i]).rjust(_shift)} | {''.join(str(i) for i in binary[i])} | {1 if function[i] else 0} |")
-
 # printer et skjema over funskjonene
 def table(rows,function_names,var):
     data = "<tr>" + "".join("<th>" + str(v) + "</th>" for v in var) + "".join("<th style=\"width: 10px;text-align:center;\">" + name + "</th>" for name in function_names) + "</tr>"
@@ -46,5 +36,5 @@ def table(rows,function_names,var):
         data += "<tr>" + "".join( ("<th>" + str(el) + "</th>") for el in row ) + "</tr>\n"
     display(HTML("<table>" + data + "</table>"))
 
-def karnaugh(func,var=VARS):
-    print(TABLE44.format("".join(str(l) for l in var[0:2]),"".join(str(l) for l in var[2:4]),*[1 if func(*number_to_binary(i,4)) else 0 for i in range(16)]))
+def karnaugh(variables,*args):
+    return digtek.methods.html_karnaugh.run(variables,*args)
