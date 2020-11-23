@@ -1,7 +1,6 @@
 """For håndtering av HTML"""
 
 from IPython.core.display import display, HTML
-import digtek.methods.html_karnaugh
 
 # Definerer hvilke variabler som brukes når en funksjon printes
 VARS = "xyzwabcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -35,6 +34,3 @@ def table(rows,function_names,var):
     for row in rows:
         data += "<tr>" + "".join( ("<th>" + str(el) + "</th>") for el in row ) + "</tr>\n"
     display(HTML("<table>" + data + "</table>"))
-
-def karnaugh(variables,*args):
-    return digtek.methods.html_karnaugh.run(variables,*args)
