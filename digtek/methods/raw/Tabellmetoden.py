@@ -1,7 +1,6 @@
 # Dette er eit program som forenklar ein funksjon gitt på kanonisk form ved hjelp av tabell metoden
 
-def sannhetstabell(variablar,
-                   mintermar):  # Lager sannhetstabell for ein funskjon vha. mintermane til funksjonen og antal variablar
+def sannhetstabell(variablar, mintermar):  # Lager sannhetstabell for ein funskjon vha. mintermane til funksjonen og antal variablar
     tabell = [0 for i in range(2 ** variablar)]
     for minterm in mintermar:
         tabell[minterm] = 1
@@ -43,7 +42,7 @@ def konverterNotasjon(variablar,
     return svar
 
 
-def sjekkLike(variablar, mintermar, uttrykk):  # Sjekker om funskjon gitt med mintermar er lik funskjon på standarform
+def sjekkLike(variablar, mintermar, uttrykk, dCare):  # Sjekker om funskjon gitt med mintermar er lik funskjon på standarform
     func = konverterNotasjon(variablar, uttrykk)
     fasit = sannhetstabell(len(variablar), mintermar)
     svar = []
@@ -51,9 +50,10 @@ def sjekkLike(variablar, mintermar, uttrykk):  # Sjekker om funskjon gitt med mi
         binary = dec2binary(i, len(variablar))
         verdiar = list(map(lambda x: bool(int(x)), list(binary)))
         svar.append(F(verdiar, variablar, func))
-    if fasit == svar:
-        return True
-    return False
+    for i in range(len(fasit)):
+        if fasit[i] != svar[i] and i not in dCare:
+            return False
+    return True
 
 
 def sjekkbar(variablar):  # Sjekker om ein variabel er ein substring av ein annan
@@ -165,7 +165,7 @@ def printTabell(tabell):  # printer tabellen på eit "fint" format
     print()
 
 
-def printPI(PI, mintermar):
+def printPI(PI, mintermar, dCare): #Printer tabell for primimplikantar
     kopi = [x[:] for x in PI]
     uttrykk = irredudant(kopi, mintermar)
     maxminterm = len("Mintermar")
@@ -198,13 +198,16 @@ def printPI(PI, mintermar):
         boolsk = bin2boolsk(primImp[2])
         print("| " + boolsk.ljust(maxuttrykk) + " | " + str(primImp[1]).ljust(maxminterm) + " |", end="")
         for minterm in mintermar:
-            if minterm in primImp[1]:
-                if minterm in essensiel:
-                    print(" " + "o".ljust(maxsiffer) + " |", end="")
-                else:
-                    print(" " + "x".ljust(maxsiffer) + " |", end="")
+            if minterm in dCare:
+                print(" " + "d".ljust(maxsiffer) + " |", end="")
             else:
-                print(" " + " ".ljust(maxsiffer) + " |", end="")
+                if minterm in primImp[1]:
+                    if minterm in essensiel:
+                        print(" " + "o".ljust(maxsiffer) + " |", end="")
+                    else:
+                        print(" " + "x".ljust(maxsiffer) + " |", end="")
+                else:
+                    print(" " + " ".ljust(maxsiffer) + " |", end="")
         if primImp in uttrykk:
             print(" True  |")
         else:
@@ -332,7 +335,7 @@ def getMintermar():
             print("Don't care må vere eit tal")
     return mintermar, dCare
 
-def dCarePI(PI, dCare):
+def dCarePI(PI, dCare): # Legger til don't care verdiane i prim implikantane sidan dei ikkje har noko å seie
     for i in range(len(PI)):
         PI[i][1] = tuple(set(PI[i][1]).union(set(dCare)))
     return PI
@@ -368,7 +371,7 @@ def main():
     PI = delDuplicat(PI)
     PI = essensielPI(PI, mintermar)
     print("Tabell for å finna minimaldekkning:")
-    printPI(PI, mintermar)
+    printPI(PI, mintermar, dCare)
 
     uttrykk = irredudant(PI, mintermar)
     boolsk = irredudant2boolsk(uttrykk)
@@ -377,13 +380,12 @@ def main():
     print()
 
     if sjekkbar(variablar):
-        if sjekkLike(variablar, mintermar, boolsk):
+        if sjekkLike(variablar, mintermar, boolsk, dCare):
             print("Forenklinga er korrekt")
         else:
             print("Funksjonane er ulike? Sjekk om du finner nokre feil.")
     else:
         print("Kan ikkje sjekka om forenklinga er riktig.")
         print("Grunna ein variabel var substring av ein annan")
-
 
 main()
