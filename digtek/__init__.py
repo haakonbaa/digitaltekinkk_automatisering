@@ -6,13 +6,14 @@ hensikt å gi oversiklige fremmgangsmåter og enkle verifiserings-funskjoner for
 
 from builtins import print as original_print
 from digtek.boolfunctions import *
+import digtek.errors
 
 SAFEPRINT = False # endrer ikke 'print' funcksjonen i 'True' mode
 
 try:
     from IPython.core.display import display, HTML
 except:
-    raise DigtekWarning("Cannot import IPython module! Are you not using Jupyter?")
+    raise digtek.errors.DigtekWarning("Cannot import IPython module! Are you not using Jupyter?")
 
 # redefinerer print til å tolke alt input som HTML!
 # Dette er veldig dårlig 'practice' og bør egentlig ikke gjøres i det heletatt!
