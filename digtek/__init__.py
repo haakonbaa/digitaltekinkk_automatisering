@@ -8,7 +8,7 @@ from builtins import print as original_print
 from digtek.boolfunctions import *
 import digtek.errors
 
-SAFEPRINT = True # endrer ikke 'print' funcksjonen i 'True' mode
+SAFEPRINT = False # endrer ikke 'print' funcksjonen i 'True' mode
 
 try:
     from IPython.core.display import display, HTML

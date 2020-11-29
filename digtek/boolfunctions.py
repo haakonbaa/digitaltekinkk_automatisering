@@ -109,7 +109,7 @@ def karnaugh(func,var=VARS):
         *(1 if func(*util.number_to_binary(i,func.variables)) else 0 for i in range(2**func.variables)),
         *var[:func.variables])
 
-def tablemethod(func):
+def tablemethod(func,var=VARS):
     digtek.methods.html_tabellmetoden.main(
-        [VARS[i] for i in range(func.variables)],
+        [var[i] for i in range(func.variables)],
         func.get_minterms())

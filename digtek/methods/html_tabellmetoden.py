@@ -1,5 +1,6 @@
 #Dette er eit program som forenklar ein funksjon gitt på kanonisk form ved hjelp av tabell metoden
 
+from IPython.display import HTML, display
 
 def dec2binary(dec, length):  # gjer eit desimalt tal om til binært tal med lengda length
     binary = str(bin(dec)[2:])
@@ -78,20 +79,22 @@ def printTabell(tabell): #printer tabellen på eit "fint" format
 
     lengdTabell = len("|Gruppa|  |  | Dekka |") + maxSub + maxVerdi
 
-    print("-"*lengdTabell)
-    print("|Gruppa| " + "Subkube".ljust(maxSub) + " | " + "Verdi".ljust(maxVerdi) + " | Dekka |")
-    print("-"*lengdTabell)
+    lines = [["Gruppa","Subkube","Verdi","Dekka"]]
     for i in range(len(tabell)):
+        line = []
         if tabell[i]:
             for minterm in tabell[i]:
-                print("|   " + str(minterm[0]) + "  | " + str(minterm[1]).ljust(maxSub) + " | " + str(minterm[2]).ljust(maxVerdi) + " | ", end= "")
-                if minterm[3]:
-                    print(str(minterm[3]) + "  |")
-                else:
-                    print(str(minterm[3]) + " |")
-                print("-"*lengdTabell)
-    print()
+                lines.append([str(m) for m in minterm])
+    print_lines(lines)
 
+# funskjon for å gjøre printing av html enklere
+# Funksjonen printer en hel tabelle gitt en 2d-liste
+def print_lines(lines):
+    total = "<table>\n"
+    for line in lines:
+        total += "\t<tr>" + "".join(r"<th>" + l + r"</th>" for l in line) + r"</tr>" + "\n"
+    total += r"</table>"
+    display(HTML(total))
 
 def printPI(PI, mintermar):
     kopi = [x[:] for x in PI]
@@ -114,31 +117,28 @@ def printPI(PI, mintermar):
             essensiel.append(minterm)
 
     mintermar.sort()
-    maxsiffer = len(str(mintermar[-1]))
-    lengd = len("|  |  |") + len(mintermar)*(3 + maxsiffer) + len(" Valgt |") + maxminterm + maxuttrykk
-    print("-"*lengd)
-    print("| " + "Uttrykk".ljust(maxuttrykk)+ " | " + "Mintermar".ljust(maxminterm) + " |", end="")
-    for minterm in mintermar:
-        print(" " + str(minterm).ljust(maxsiffer) + " |", end="")
-    print(" Valgt |")
-    print("-"*lengd)
+
+    line_1 = ["Uttrykk","Mintermar",*(str(m).ljust(2) for m in mintermar),"Valgt"]
+    lines = [line_1]
+
+
     for primImp in PI:
         boolsk = bin2boolsk(primImp[2])
-        print("| " + boolsk.ljust(maxuttrykk) + " | " + str(primImp[1]).ljust(maxminterm) + " |", end="")
+        line = [boolsk,str(primImp[1])]
         for minterm in mintermar:
             if minterm in primImp[1]:
                 if minterm in essensiel:
-                    print(" " + "o".ljust(maxsiffer) + " |", end="")
+                    line.append("o")
                 else:
-                    print(" " + "x".ljust(maxsiffer) + " |", end="")
+                    line.append("x")
             else:
-                print(" " + " ".ljust(maxsiffer) + " |", end="")
+                line.append(" ")
         if primImp in uttrykk:
-            print(" True  |")
+            line.append("True")
         else:
-            print(" False |")
-        print("-"*lengd)
-    print()
+            line.append("False")
+        lines.append(line)
+    print_lines(lines)
 
 
 
@@ -250,3 +250,7 @@ def main(variabla,mintermar):
     boolsk = irredudant2boolsk(uttrykk)
     print("Forenkla boolsk funksjon:")
     print("F = " + boolsk)
+
+if __name__ == "__main__":
+    print("""Denne filen må kalles fra en annen fil som en modul.
+    bruk heller ../digtek/methods/raw/tabellmetoden.py""")
